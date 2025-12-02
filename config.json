@@ -1,0 +1,48 @@
+{
+  "demos": [
+    {
+      "icon": "bi bi-person-lines-fill",
+      "title": "People Names",
+      "body": "Match noisy person names",
+      "listA": ["John Smith", "Jane Doe", "Robert Jr", "Chris Evans", "Ana Maria"],
+      "listB": ["Jon Smyth", "J. Doe", "Robert Downey Jr", "Christopher Evans", "Ana-Maria"],
+      "locks": [["Chris Evans", "Christopher Evans"]]
+    },
+    {
+      "icon": "bi bi-building",
+      "title": "Company Names",
+      "body": "Match company entities",
+      "listA": ["Google LLC", "Apple Computer", "Meta Platforms", "Amazon.com Inc", "OpenAI"],
+      "listB": ["Alphabet Corp", "Apple Inc.", "Facebook Inc.", "Amazon Inc", "Open AI"],
+      "locks": [["Google LLC", "Alphabet Corp"]]
+    },
+    {
+      "icon": "bi bi-globe2",
+      "title": "Countries",
+      "body": "Map country variants",
+      "listA": ["United States", "South Korea", "UAE", "Ivory Coast", "Czech Republic"],
+      "listB": ["USA", "Republic of Korea", "United Arab Emirates", "Cote d'Ivoire", "Czechia"],
+      "locks": [["United States", "USA"]]
+    },
+    {
+      "icon": "bi bi-upc-scan",
+      "title": "Product SKUs",
+      "body": "Resolve SKU variants",
+      "listA": ["SKU-1234", "SKU-ABCD", "Item-5678", "Prod X", "Gadget Pro 2"],
+      "listB": ["1234-SKU", "SKU ABCD", "#5678 Item", "Product X", "Gadget Pro II"],
+      "locks": [["Prod X", "Product X"]]
+    },
+    {
+      "icon": "bi bi-geo-alt",
+      "title": "Addresses",
+      "body": "Normalize addresses",
+      "listA": ["221B Baker Street", "1600 Pennsylvania Ave", "Eiffel Tower Paris", "Times Sq NYC", "Silicon Valley"],
+      "listB": ["221b Baker St.", "1600 Pennsylvania Avenue", "Tour Eiffel, Paris", "Times Square New York", "Silicon Vally"],
+      "locks": [["221B Baker Street", "221b Baker St."]]
+    }
+  ],
+  "defaults": {
+    "ratio": "token_sort_ratio",
+    "threshold": 60
+  }
+}
