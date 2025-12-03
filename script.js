@@ -145,39 +145,27 @@ function renderEditor() {
   const locksView = (current.locks || []).map((l, idx) => html`
     <span class="badge text-bg-primary me-2 mb-2">
       ${l[0]} = ${l[1]}
-      <button class="btn btn-sm btn-link text-white ps-2" @click=${() => { current.locks.splice(idx, 1); renderEditor(); }}>x</button>
+      <button class="btn btn-sm btn-link text-danger ps-2" @click=${() => { current.locks.splice(idx, 1); renderEditor(); }}>X</button>
     </span>
   `);
 
-  const tableA = html`
-    <table class="table table-sm">
-      <thead class="table-light"><tr><th style="width:40px">#</th><th>List A</th><th style="width:70px"></th></tr></thead>
-      <tbody>
-        ${current.listA.map((val, i) => html`
-          <tr>
-            <td class="text-muted">${i + 1}</td>
-            <td><input class="form-control" .value=${val} @input=${(e) => { current.listA[i] = e.target.value; }} /></td>
-            <td><button class="btn btn-outline-danger btn-sm" @click=${() => { current.listA.splice(i, 1); renderEditor(); }}>Del</button></td>
-          </tr>
-        `)}
-      </tbody>
-    </table>
-    <button class="btn btn-outline-secondary btn-sm" @click=${() => { current.listA.push(""); renderEditor(); }}>Add Row</button>`;
+const tableA = html`
+  <label class="form-label fw-semibold">List A (one item per line)</label>
+  <textarea class="form-control" rows="10"
+    @input=${(e) => {
+      current.listA = e.target.value.split("\n").map(x => x.trim()).filter(Boolean);
+    }}
+  >${current.listA.join("\n")}</textarea>
+`;
 
-  const tableB = html`
-    <table class="table table-sm">
-      <thead class="table-light"><tr><th style="width:40px">#</th><th>List B</th><th style="width:70px"></th></tr></thead>
-      <tbody>
-        ${current.listB.map((val, i) => html`
-          <tr>
-            <td class="text-muted">${i + 1}</td>
-            <td><input class="form-control" .value=${val} @input=${(e) => { current.listB[i] = e.target.value; }} /></td>
-            <td><button class="btn btn-outline-danger btn-sm" @click=${() => { current.listB.splice(i, 1); renderEditor(); }}>Del</button></td>
-          </tr>
-        `)}
-      </tbody>
-    </table>
-    <button class="btn btn-outline-secondary btn-sm" @click=${() => { current.listB.push(""); renderEditor(); }}>Add Row</button>`;
+const tableB = html`
+  <label class="form-label fw-semibold">List B (one item per line)</label>
+  <textarea class="form-control" rows="10"
+    @input=${(e) => {
+      current.listB = e.target.value.split("\n").map(x => x.trim()).filter(Boolean);
+    }}
+  >${current.listB.join("\n")}</textarea>
+`;
 
   render(html`
     <div class="card">
@@ -211,15 +199,41 @@ function renderEditor() {
     </div>
   `, document.getElementById("editor"));
 
-  const addLockBtn = document.getElementById("add-lock");
-  if (addLockBtn) addLockBtn.addEventListener("click", () => {
+const addLockBtn = document.getElementById("add-lock");
+if (addLockBtn)
+  addLockBtn.onclick = () => {
     const a = document.getElementById("lock-a").value;
     const b = document.getElementById("lock-b").value;
-    if (!a || !b) return notify("warning", "Select items", "Choose from both lists to add a lock.");
-    if (current.locks.some((l) => l[0] === a || l[1] === b)) return notify("warning", "Duplicate lock", "One of the items is already locked.");
+
+    if (!a || !b) {
+      notify(
+        "warning",
+        "Select items",
+        "Choose from both lists to add a lock."
+      );
+      return;
+    }
+    if (current.locks.some((l) => l[0] === a && l[1] === b)) {
+      notify("warning", "Duplicate lock", "This lock already exists.");
+      return;
+    } else if (current.locks.some((l) => l[0] === a)) {
+      notify(
+        "warning",
+        "Already locked",
+        `"${a}" is already locked to another item.`
+      );
+      return;
+    } else if (current.locks.some((l) => l[1] === b)) {
+      notify(
+        "warning",
+        "Already locked",
+        `"${b}" is already locked to another item.`
+      );
+      return;
+    }
     current.locks.push([a, b]);
     renderEditor();
-  });
+  };
 
   const runBtn = document.getElementById("run-editor");
   if (runBtn) runBtn.addEventListener("click", async () => {
@@ -239,7 +253,6 @@ function renderEditor() {
     }
   });
 }
-
 // Init: render cards and wire handlers
 render(loading, document.getElementById("demo-cards"));
 const { demos = [], defaults: fetchedDefaults = {} } = await fetch("config.json").then((r) => r.json()).catch(() => ({ demos: [], defaults: {} }));
