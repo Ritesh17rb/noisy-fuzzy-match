@@ -1,10 +1,7 @@
 import { html, render } from "lit-html";
 import { bootstrapAlert } from "bootstrap-alert";
 
-// Tiny DOM helper
 const $ = (sel, el = document) => el.querySelector(sel);
-
-// Spinner while computing
 const loading = html`<div class="text-center p-4"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>`;
 
 function notify(color, title, body) {
@@ -12,9 +9,7 @@ function notify(color, title, body) {
 }
 
 function scoreColor(score) {
-  if (score >= 80) return "text-success";
-  if (score >= 50) return "text-warning";
-  return "text-danger";
+  return score >= 80 ? "text-success" : score >= 50 ? "text-warning" : "text-danger";
 }
 
 function renderMatches({ matches, unmatchedSource, unmatchedTarget }) {
@@ -65,7 +60,6 @@ function renderMatches({ matches, unmatchedSource, unmatchedTarget }) {
   `, $("#output"));
 }
 
-// Core matching: Hungarian + fuzzball + manual locks
 async function matchListsGlobal(listA, listB, manualMatches, options) {
   const { ratio = "token_sort_ratio", threshold } = options || {};
   const [{ linearSumAssignment }, fuzzball] = await Promise.all([
@@ -93,7 +87,7 @@ async function matchListsGlobal(listA, listB, manualMatches, options) {
 
   const manual = manualMatches.map(([a, b]) => ({ source: a, target: b, score: 100, isManual: true }));
   const all = [...manual, ...algo]
-    .filter((m) => (threshold == null ? true : m.score >= Number(threshold)))
+    .filter((m) => threshold == null || m.score >= Number(threshold))
     .sort((x, y) => y.score - x.score);
 
   const matchedA = new Set(all.map((m) => m.source));
@@ -103,6 +97,27 @@ async function matchListsGlobal(listA, listB, manualMatches, options) {
     unmatchedSource: listA.filter((x) => !matchedA.has(x)),
     unmatchedTarget: listB.filter((x) => !matchedB.has(x)),
   };
+}
+
+async function parseCSV(file) {
+  const Papa = await import("https://esm.sh/papaparse@5.4.1");
+  return new Promise((resolve, reject) => {
+    Papa.default.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => resolve(results.data.map(row => Object.values(row)[0]).map(x => String(x).trim()).filter(Boolean)),
+      error: reject
+    });
+  });
+}
+
+async function handleFileUpload(file, targetList) {
+  const items = await parseCSV(file);
+  if (!items.length) throw new Error("No items found in file");
+  current[targetList === 'A' ? 'listA' : 'listB'] = items;
+  current[targetList === 'A' ? 'fileNameA' : 'fileNameB'] = file.name;
+  renderEditor();
+  notify("success", "File loaded", `${items.length} items loaded from ${file.name}`);
 }
 
 function renderCards(config) {
@@ -131,54 +146,61 @@ function renderCards(config) {
       </div>
     `),
   ];
-  render(html`${cards}`, document.getElementById("demo-cards"));
+  render(html`${cards}`, $("#demo-cards"));
 }
 
-// Editor state
-let current = { listA: [], listB: [], locks: [] };
-let manualLocks = [];
+let current = { listA: [], listB: [], locks: [], fileNameA: null, fileNameB: null };
 
 function renderEditor() {
   const optsA = current.listA.map((x) => html`<option value="${x}">${x}</option>`);
   const optsB = current.listB.map((x) => html`<option value="${x}">${x}</option>`);
 
-  const locksView = (current.locks || []).map((l, idx) => html`
+  const locksView = current.locks.map((l, idx) => html`
     <span class="badge text-bg-primary me-2 mb-2">
       ${l[0]} = ${l[1]}
       <button class="btn btn-sm btn-link text-danger ps-2" @click=${() => { current.locks.splice(idx, 1); renderEditor(); }}>X</button>
     </span>
   `);
 
-const tableA = html`
-  <label class="form-label fw-semibold">List A (one item per line)</label>
-  <textarea class="form-control" rows="10"
-    @input=${(e) => {
-      current.listA = e.target.value.split("\n").map(x => x.trim()).filter(Boolean);
-    }}
-  >${current.listA.join("\n")}</textarea>
-`;
+  const createListInput = (label, list, targetList) => {
+    const fileName = targetList === 'A' ? current.fileNameA : current.fileNameB;
+    return html`
+      <label class="form-label fw-semibold">${label}</label>
+      <div class="mb-2">
+        <input type="file" class="form-control form-control-sm ${fileName ? 'border-success' : ''}" accept=".csv" 
+          @change=${async (e) => {
+            const file = e.target.files[0];
+            if (file) {
+              try {
+                await handleFileUpload(file, targetList);
+              } catch (error) {
+                notify("danger", "Error loading file", error.message);
+              }
+              e.target.value = '';
+            }
+          }} />
+        ${fileName ? html`<small class="text-success"><i class="bi bi-check-circle-fill me-1"></i>${fileName}</small>` : html`<small class="text-muted">Upload CSV file</small>`}
+      </div>
+   <textarea 
+  class="form-control" 
+  rows="10"
+  .value=${current[list].join("\n")}
+  @input=${(e) => current[list] = e.target.value.split("\n").map(x => x.trim()).filter(Boolean)}
+></textarea>
 
-const tableB = html`
-  <label class="form-label fw-semibold">List B (one item per line)</label>
-  <textarea class="form-control" rows="10"
-    @input=${(e) => {
-      current.listB = e.target.value.split("\n").map(x => x.trim()).filter(Boolean);
-    }}
-  >${current.listB.join("\n")}</textarea>
-`;
+    `;
+  };
 
   render(html`
     <div class="card">
       <div class="card-header d-flex justify-content-between align-items-center">
         <div class="fw-bold">Editor</div>
-        <div>
-          <button class="btn btn-sm btn-primary" id="run-editor">Run</button>
-        </div>
+        <button class="btn btn-sm btn-primary" id="run-editor">Run</button>
       </div>
       <div class="card-body">
         <div class="row g-4">
-          <div class="col-md-6">${tableA}</div>
-          <div class="col-md-6">${tableB}</div>
+          <div class="col-md-6">${createListInput("List A (one item per line)", "listA", "A")}</div>
+          <div class="col-md-6">${createListInput("List B (one item per line)", "listB", "B")}</div>
         </div>
         <hr />
         <div class="row g-3 align-items-end">
@@ -197,55 +219,28 @@ const tableB = html`
         <div class="mt-3">${locksView}</div>
       </div>
     </div>
-  `, document.getElementById("editor"));
+  `, $("#editor"));
 
-const addLockBtn = document.getElementById("add-lock");
-if (addLockBtn)
-  addLockBtn.onclick = () => {
-    const a = document.getElementById("lock-a").value;
-    const b = document.getElementById("lock-b").value;
-
-    if (!a || !b) {
-      notify(
-        "warning",
-        "Select items",
-        "Choose from both lists to add a lock."
-      );
-      return;
-    }
-    if (current.locks.some((l) => l[0] === a && l[1] === b)) {
-      notify("warning", "Duplicate lock", "This lock already exists.");
-      return;
-    } else if (current.locks.some((l) => l[0] === a)) {
-      notify(
-        "warning",
-        "Already locked",
-        `"${a}" is already locked to another item.`
-      );
-      return;
-    } else if (current.locks.some((l) => l[1] === b)) {
-      notify(
-        "warning",
-        "Already locked",
-        `"${b}" is already locked to another item.`
-      );
-      return;
-    }
+  $("#add-lock").onclick = () => {
+    const a = $("#lock-a").value;
+    const b = $("#lock-b").value;
+    if (!a || !b) return notify("warning", "Select items", "Choose from both lists to add a lock.");
+    if (current.locks.some((l) => l[0] === a && l[1] === b)) return notify("warning", "Duplicate lock", "This lock already exists.");
+    if (current.locks.some((l) => l[0] === a)) return notify("warning", "Already locked", `"${a}" is already locked to another item.`);
+    if (current.locks.some((l) => l[1] === b)) return notify("warning", "Already locked", `"${b}" is already locked to another item.`);
     current.locks.push([a, b]);
     renderEditor();
   };
 
-  const runBtn = document.getElementById("run-editor");
-  if (runBtn) runBtn.addEventListener("click", async () => {
-    manualLocks = current.locks || [];
-    const listA = current.listA.map((x) => x.trim()).filter(Boolean);
-    const listB = current.listB.map((x) => x.trim()).filter(Boolean);
+  $("#run-editor").addEventListener("click", async () => {
+    const listA = current.listA.filter(Boolean);
+    const listB = current.listB.filter(Boolean);
     if (!listA.length || !listB.length) return notify("warning", "Add data", "Add items to both lists before running.");
-    render(loading, document.getElementById("output"));
+    render(loading, $("#output"));
     try {
-      const result = await matchListsGlobal(listA, listB, manualLocks, {
-        ratio: document.getElementById("ratio").value || defaultSettings.ratio,
-        threshold: document.getElementById("threshold").value || defaultSettings.threshold,
+      const result = await matchListsGlobal(listA, listB, current.locks, {
+        ratio: $("#ratio").value || defaultSettings.ratio,
+        threshold: $("#threshold").value || defaultSettings.threshold,
       });
       renderMatches(result);
     } catch (e) {
@@ -253,21 +248,32 @@ if (addLockBtn)
     }
   });
 }
-// Init: render cards and wire handlers
-render(loading, document.getElementById("demo-cards"));
+
+render(loading, $("#demo-cards"));
 const { demos = [], defaults: fetchedDefaults = {} } = await fetch("config.json").then((r) => r.json()).catch(() => ({ demos: [], defaults: {} }));
 const config = { demos, defaults: fetchedDefaults };
 const defaultSettings = config.defaults || { ratio: "token_sort_ratio", threshold: 60 };
 renderCards(config);
-
-document.getElementById("demo-cards").addEventListener("click", (e) => {
+renderEditor();   
+$("#demo-cards").addEventListener("click", (e) => {
   const fresh = e.target.closest("[data-load-fresh]");
-  if (fresh) { current = { listA: [""], listB: [""], locks: [] }; renderEditor(); return; }
+  if (fresh) { 
+    current = { listA: [""], listB: [""], locks: [], fileNameA: null, fileNameB: null }; 
+    renderEditor(); 
+    return; 
+  }
   const loadBtn = e.target.closest("[data-load-demo]");
   if (loadBtn) {
-    const i = Number(loadBtn.getAttribute("data-load-demo"));
-    const demo = config.demos[i]; if (!demo) return;
-    current = { listA: [...(demo.listA || [])], listB: [...(demo.listB || [])], locks: (demo.locks || []).map((l) => [l[0], l[1]]) };
-    renderEditor();
+    const demo = config.demos[Number(loadBtn.getAttribute("data-load-demo"))];
+    if (demo) {
+      current = { 
+        listA: [...demo.listA], 
+        listB: [...demo.listB], 
+        locks: demo.locks?.map((l) => [l[0], l[1]]) || [],
+        fileNameA: null,
+        fileNameB: null
+      };
+      renderEditor();
+    }
   }
 });

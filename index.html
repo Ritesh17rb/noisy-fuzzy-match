@@ -5,11 +5,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Noisy Entity Matcher</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTUiIGZpbGw9IiMyNTYzZWIiLz48cGF0aCBmaWxsPSIjZmZmIiBkPSJtMTYgNyAyIDcgNyAyLTcgMi0yIDctMi03LTctMiA3LTJaIi8+PC9zdmc+">
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTUiIGZpbGw9IiMyNTYzZWIiLz48cGF0aCBmaWxsPSIjZmZmIiBkPSJtMTYgNyAyIDcgNyAyLTcgMi0yIDctMi03LTctMiA3LTJaIi8+PC9zdmc+">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
   <style>
-    /* Minimal styles; rely on Bootstrap */
   </style>
 </head>
 
@@ -17,48 +17,53 @@
   <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
     <div class="container-fluid">
       <a class="navbar-brand" href=".">Noisy Entity Matcher</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <div class="ms-auto"></div>
         <div class="nav-item dropdown ms-2" role="group" aria-label="Toggle dark mode" title="Toggle Dark Mode">
-          <button class="dark-theme-toggle btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Toggle theme (auto)">
+          <button class="dark-theme-toggle btn btn-outline-light dropdown-toggle" type="button"
+            data-bs-toggle="dropdown" aria-expanded="false" aria-label="Toggle theme (auto)">
             <i class="bi bi-circle-half"></i>
           </button>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li><button class="dropdown-item" data-bs-theme-value="light"><i class="me-2 bi bi-sun-fill"></i> Light</button></li>
-            <li><button class="dropdown-item" data-bs-theme-value="dark"><i class="me-2 bi bi-moon-stars-fill"></i> Dark</button></li>
-            <li><button class="dropdown-item" data-bs-theme-value="auto"><i class="me-2 bi bi-circle-half"></i> Auto</button></li>
+            <li><button class="dropdown-item" data-bs-theme-value="light"><i class="me-2 bi bi-sun-fill"></i>
+                Light</button></li>
+            <li><button class="dropdown-item" data-bs-theme-value="dark"><i class="me-2 bi bi-moon-stars-fill"></i>
+                Dark</button></li>
+            <li><button class="dropdown-item" data-bs-theme-value="auto"><i class="me-2 bi bi-circle-half"></i>
+                Auto</button></li>
           </ul>
         </div>
       </div>
     </div>
   </nav>
-<div class="container mt-4">
-  <h1 class="display-1 my-4 text-center">Noisy Entity Matcher</h1>
-  <h2 class="display-6 text-center">
-    Resolve <em>messy</em> real-world text using Fuzzy Matching + Hungarian Optimization
-  </h2>
+  <div class="container mt-4">
+    <h1 class="display-1 my-4 text-center">Noisy Entity Matcher</h1>
+    <h2 class="display-6 text-center">
+      Resolve <em>messy</em> real-world text using Fuzzy Matching + Hungarian Optimization
+    </h2>
 
-  <div class="mx-auto my-3 narrative" style="max-width: 720px;">
-    <p class="mb-2">
-      Clean, normalize, and match unstructured text across datasets — ideal for names,
-      companies, addresses, products, countries, and more.
-    </p>
-    <ul class="mb-0">
-      <li>When two datasets contain inconsistent spellings or duplicate entries.</li>
-      <li>When your CRM, analytics system, or database needs entity reconciliation.</li>
-      <li>When you want globally optimized matching instead of naive pair-matching.</li>
-      <li>When you need transparent scoring, manual locks, and complete control.</li>
-    </ul>
-  </div>
+    <div class="mx-auto my-3 narrative" style="max-width: 720px;">
+      <p class="mb-2">
+        Clean, normalize, and match unstructured text across datasets — ideal for names,
+        companies, addresses, products, countries, and more.
+      </p>
+      <ul class="mb-0">
+        <li>When two datasets contain inconsistent spellings or duplicate entries.</li>
+        <li>When your CRM, analytics system, or database needs entity reconciliation.</li>
+        <li>When you want globally optimized matching instead of naive pair-matching.</li>
+        <li>When you need transparent scoring, manual locks, and complete control.</li>
+      </ul>
+    </div>
 
-  <div class="my-4">
-    <h3 class="h5 mb-3 text-center">Popular Matching Templates</h3>
+    <div class="my-4">
+      <h3 class="h5 mb-3 text-center">Popular Matching Templates</h3>
     </div>
   </div>
-</div>
+  </div>
 
 
   <div class="container my-4">
@@ -67,9 +72,21 @@
     <form id="settings-form">
       <details class="my-4 card rounded-3 shadow-sm">
         <summary class="card-header d-flex justify-content-between align-items-center">
-          <div><i class="bi bi-gear me-2"></i> Settings</div>
-          <button type="reset" class="btn btn-sm btn-outline-danger">Reset</button>
+          <div class="d-flex align-items-center">
+            <i class="bi bi-gear me-2"></i>
+            <span class="fw-semibold">Settings</span>
+          </div>
+
+          <div class="d-flex align-items-center gap-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal"
+              data-bs-target="#settingsHelpModal" data-bs-toggle="tooltip" title="Learn More">
+              <i class="bi bi-info-circle"></i>
+            </button>
+
+            <button type="reset" class="btn btn-sm btn-outline-danger">Reset</button>
+          </div>
         </summary>
+
         <div class="card-body">
           <div class="row g-3">
             <div class="col-sm-6">
@@ -79,16 +96,84 @@
                 <option value="token_set_ratio">token_set_ratio</option>
                 <option value="ratio">ratio</option>
               </select>
+              <div class="form-text small">How tokens & order are handled.</div>
             </div>
+
             <div class="col-sm-6">
               <label class="form-label" for="threshold">Min Score Threshold</label>
-              <input class="form-control" id="threshold" name="threshold" type="number" min="0" max="100" step="1" placeholder="e.g. 60" />
+              <input class="form-control" id="threshold" name="threshold" type="number" min="0" max="100" step="1"
+                placeholder="e.g. 60" />
+              <div class="form-text small">Minimum similarity (0–100) for a match to be shown.</div>
             </div>
           </div>
         </div>
       </details>
     </form>
 
+    <!-- Compact Settings Help Modal -->
+    <div class="modal fade" id="settingsHelpModal" tabindex="-1" aria-labelledby="settingsHelpModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+          <div class="modal-header">
+            <h5 class="modal-title" id="settingsHelpModalLabel">
+              <i class="bi bi-gear me-2"></i>Matching Settings Guide
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+
+          <div class="modal-body">
+
+            <h6 class="mb-1">Fuzzy Ratios</h6>
+            <ul class="small mb-3">
+              <li>
+                <strong>token_sort_ratio</strong> — best when words are the same but order differs.<br>
+                Example:
+                <span style="color:#68d4ae;">“Smith John”</span>
+                ↔
+                <span style="color:#2bbccf;">“John Smith”</span>
+              </li>
+
+              <li>
+                <strong>token_set_ratio</strong> — ignores extra words; good for companies with suffixes.<br>
+                Example:
+                <span style="color:#68d4ae;">“Google LLC”</span>
+                ↔
+                <span style="color:#2bbccf;">“Google Alphabet”</span>
+              </li>
+
+              <li>
+                <strong>ratio</strong> — simple typo-tolerant match.<br>
+                Example:
+                <span style="color:#68d4ae;">“Jon”</span>
+                ↔
+                <span style="color:#2bbccf;">“John”</span>
+              </li>
+
+              <h6 class="mb-1">Threshold (0–100)</h6>
+              <ul class="small mb-3">
+                <li><strong>≥ 80</strong> — strict, high confidence</li>
+                <li><strong>60–79</strong> — balanced default</li>
+                <li><strong>&lt; 60</strong> — permissive, may require review</li>
+              </ul>
+
+              <h6 class="mb-1">Quick Tips</h6>
+              <ul class="small mb-0">
+                <li>Use <strong>token_sort_ratio</strong> for human names.</li>
+                <li>Use <strong>token_set_ratio</strong> for company variations.</li>
+                <li>Increase threshold if matches feel noisy.</li>
+                <li>Use <strong>manual locks</strong> to force correct pairs.</li>
+              </ul>
+
+          </div>
+
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Got it</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <div id="editor" class="my-4"></div>
     <div id="output"></div>
   </div>
@@ -100,5 +185,4 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
   <script type="module" src="script.js"></script>
 </body>
-
 </html>
